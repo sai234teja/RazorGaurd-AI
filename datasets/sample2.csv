@@ -1,6 +1,0 @@
-txn_id,created_at,transaction_amt,user,merchant,payment_type,device,city,result,isFraud
-A001,2026-08-21 09:01:00,450,U101,SHOP01,UPI,DEV01,Hyderabad,success,0
-A002,2026-08-21 09:03:00,1800,U102,SHOP01,UPI,DEV02,Hyderabad,success,0
-A003,2026-08-21 09:05:00,27000,U103,SHOP02,CARD,DEV03,Mumbai,success,1
-A004,2026-08-21 09:07:00,650,U104,SHOP01,UPI,DEV04,Delhi,success,0
-A005,2026-08-21 09:09:00,31000,U105,SHOP03,CARD,DEV05,Chennai,success,1
