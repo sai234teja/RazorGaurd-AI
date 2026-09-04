@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080b16">
+    <title>RazorGuard AI — Shop smarter. Pay safer.</title>
+    <link rel="stylesheet" href="style.css?v=20260902f">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+/* INJECTED TO BYPASS CACHE */
+.checkout-confirmation-overlay {
+    position: fixed !important; top: 0 !important; left: 0 !important; width: 100% !important; height: 100% !important;
+    background: rgba(0, 0, 0, 0.75) !important; backdrop-filter: blur(5px) !important;
+    display: flex !important; justify-content: center !important; align-items: center !important; z-index: 100000 !important;
+}
+.checkout-confirmation-modal {
+    background: #111 !important; color: #fff !important; width: 400px !important; max-width: 90vw !important;
+    border-radius: 12px !important; border: 1px solid rgba(255,255,255,0.1) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important; display: flex !important; flex-direction: column !important; max-height: 90vh !important; overflow-y: auto !important;
+}
+.checkout-confirmation-header {
+    padding: 20px !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; display: flex !important; justify-content: space-between !important; align-items: flex-start !important;
+}
+.checkout-test-badge { background: rgba(53,208,127,0.2) !important; color: #35d07f !important; padding: 2px 6px !important; border-radius: 4px !important; font-size: 10px !important; font-weight: bold !important; }
+.checkout-confirmation-header h2 { margin: 10px 0 5px !important; font-size: 18px !important; }
+.checkout-confirmation-header p { margin: 0 !important; font-size: 12px !important; color: #aaa !important; }
+.checkout-close-button { background: none !important; border: none !important; color: #aaa !important; font-size: 24px !important; cursor: pointer !important; }
+.checkout-confirmation-body { padding: 20px !important; }
+.checkout-items { max-height: 200px !important; overflow-y: auto !important; margin-bottom: 15px !important; }
+.checkout-item { display: flex !important; justify-content: space-between !important; padding: 10px 0 !important; border-bottom: 1px solid rgba(255,255,255,0.05) !important; font-size: 14px !important; }
+.checkout-item div { display: flex !important; flex-direction: column !important; }
+.checkout-item span { font-size: 12px !important; color: #aaa !important; }
+.checkout-summary { margin-bottom: 15px !important; }
+.checkout-summary-row { display: flex !important; justify-content: space-between !important; font-size: 14px !important; margin-bottom: 5px !important; color: #ccc !important; }
+.checkout-total-row { font-size: 16px !important; font-weight: bold !important; color: #fff !important; border-top: 1px solid rgba(255,255,255,0.1) !important; padding-top: 10px !important; margin-top: 10px !important; }
+.checkout-verification { display: flex !important; flex-direction: column !important; gap: 5px !important; margin-bottom: 20px !important; font-size: 12px !important; color: #35d07f !important; }
+.checkout-confirmation-footer { display: flex !important; justify-content: flex-end !important; gap: 10px !important; }
+.checkout-cancel-action { padding: 10px 15px !important; background: transparent !important; color: #aaa !important; border: 1px solid rgba(255,255,255,0.2) !important; border-radius: 6px !important; cursor: pointer !important; }
+.checkout-confirm-action { padding: 10px 15px !important; background: #635bff !important; color: #fff !important; border: none !important; border-radius: 6px !important; cursor: pointer !important; font-weight: bold !important; }
+.checkout-confirm-action:hover { background: #524ade !important; }
+.razorguard-premium-panel {
+    background: linear-gradient(145deg, rgba(13,17,28,0.98), rgba(7,10,18,0.99));
+    border: 1px solid rgba(139,124,255,0.3);
+    border-radius: 16px;
+    padding: 30px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.6), 0 0 40px rgba(139,124,255,0.1) inset;
+    width: 420px;
+    max-width: 90vw;
+    font-family: var(--font-family, sans-serif);
+    position: relative;
+    max-height: 90vh; overflow-y: auto;
+}
+
+.panel-header { margin-bottom: 25px; }
+.shield-icon { font-size: 32px; display: block; margin-bottom: 10px; }
+.panel-header h2 { font-size: 16px; font-weight: 800; letter-spacing: 1px; color: #fff; margin: 0; }
+.panel-header p { font-size: 10px; color: #a3abc0; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+.risk-widget {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.risk-score-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.03);
+    border: 2px solid #35d07f;
+    box-shadow: 0 0 15px rgba(53,208,127,0.2);
+    margin-bottom: 10px;
+}
+.risk-score-value { font-size: 24px; font-weight: 800; line-height: 1; }
+.risk-score-max { font-size: 10px; color: #69748a; margin-top: 2px; }
+.risk-level-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #35d07f; }
+
+.risk-low .risk-score-circle { border-color: #35d07f; box-shadow: 0 0 15px rgba(53,208,127,0.2); }
+.risk-low .risk-level-label { color: #35d07f; }
+.risk-medium .risk-score-circle { border-color: #f5a623; box-shadow: 0 0 15px rgba(245,166,35,0.2); }
+.risk-medium .risk-level-label { color: #f5a623; }
+.risk-high .risk-score-circle { border-color: #ff4a4a; box-shadow: 0 0 15px rgba(255,74,74,0.2); }
+.risk-high .risk-level-label { color: #ff4a4a; }
+
+.security-verification {
+    text-align: left;
+    margin-bottom: 25px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+    padding: 16px;
+}
+.security-verification h3 { font-size: 10px; color: #7d8799; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;}
+.check-list { list-style: none; padding: 0; margin: 0; }
+.scan-step {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    margin-bottom: 10px;
+    color: #e0e5eb;
+    position: relative;
+}
+.scan-step:last-child { margin-bottom: 0; }
+
+.scan-status.verified { color: #35d07f; font-weight: 600; }
+.scan-status.failed { color: #ff4a4a; font-weight: 600; }
+.scan-status.checking { color: #f5a623; font-style: italic; }
+
+.panel-divider { border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 25px 0; }
+
+.security-boundary-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 25px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+.boundary-row { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; }
+.boundary-node { padding: 6px 10px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+.boundary-node.ai { color: #b4bdcc; }
+.boundary-node.security { color: #fff; background: rgba(139,124,255,0.15); border-color: rgba(139,124,255,0.5); }
+.boundary-node.razorpay { color: #35d07f; background: rgba(53,208,127,0.1); border-color: rgba(53,208,127,0.3); }
+.boundary-arrow, .boundary-arrow-down { color: #5f6a7d; font-size: 12px; }
+
+.decision-status { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 800; margin-bottom: 25px; letter-spacing: 1px; }
+.decision-dot { width: 8px; height: 8px; border-radius: 50%; background: #35d07f; box-shadow: 0 0 10px #35d07f; animation: pulse 2s infinite; }
+.risk-low .decision-dot { background: #35d07f; box-shadow: 0 0 10px #35d07f; }
+.risk-medium .decision-dot { background: #f5a623; box-shadow: 0 0 10px #f5a623; }
+.risk-high .decision-dot { background: #ff4a4a; box-shadow: 0 0 10px #ff4a4a; }
+
+.risk-low { color: #35d07f; }
+.risk-medium { color: #f5a623; }
+.risk-high { color: #ff4a4a; }
+
+.panel-actions .continue-btn, .panel-actions .cancel-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: 0;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.continue-btn { background: #fff; color: #000; box-shadow: 0 4px 15px rgba(255,255,255,0.15); }
+.continue-btn:hover { background: #e0e5eb; transform: translateY(-1px); }
+.cancel-btn { background: rgba(255,74,74,0.1); color: #ff4a4a; border: 1px solid rgba(255,74,74,0.3); }
+.cancel-btn:hover { background: rgba(255,74,74,0.2); }
+
+/* RazorGuard Purchase Protection Panel */
+.checkout-security-panel {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+    color: #e0e5eb;
+}
+.checkout-security-panel h3 {
+    margin-top: 0;
+    color: #fff;
+    font-size: 1.1rem;
+}
+.checkout-security-panel .security-checks {
+    margin-top: 12px;
+}
+.checkout-security-panel .security-check-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.checkout-security-panel .security-check-item:last-child { border-bottom: none; }
+.checkout-security-panel .check-name { text-transform: capitalize; }
+.checkout-security-panel .check-result.passed { color: #35d07f; }
+.checkout-security-panel .check-result.failed { color: #ff4a4a; }
+.checkout-security-panel .risk-info {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: #cbd5e1;
+}
+
+/* Animation Classes */
+@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+.slide-in-1 { animation: slideDown 0.3s ease forwards 0.2s; opacity: 0; }
+.slide-in-2 { animation: slideDown 0.3s ease forwards 0.5s; opacity: 0; }
+.slide-in-3 { animation: slideDown 0.3s ease forwards 0.8s; opacity: 0; }
+.slide-in-4 { animation: slideDown 0.3s ease forwards 1.1s; opacity: 0; }
+.slide-in-5 { animation: slideDown 0.3s ease forwards 1.4s; opacity: 0; }
+.slide-in-6 { animation: slideDown 0.3s ease forwards 1.8s; opacity: 0; }
+.slide-in-7 { animation: slideDown 0.3s ease forwards 2.2s; opacity: 0; }
+.slide-in-8 { animation: slideDown 0.3s ease forwards 2.6s; opacity: 0; }
+
+@keyframes pulse { 0% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.6; transform: scale(1); } }
+
+/* Scanner Line Animation */
+.razorguard-premium-panel::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(139,124,255,0.15));
+    border-bottom: 2px solid rgba(139,124,255,0.6);
+    animation: scanLine 2.6s linear forwards;
+    pointer-events: none;
+}
+
+/* SIMPLE PAGE-LOAD FADE-IN */
+.header, .hero-badge, .hero h1, .hero-lead, .search-shell, .examples, .hero-proof {
+    opacity: 0;
+    animation: pageFadeIn 0.6s ease forwards;
+}
+.header       { animation-delay: 0s; }
+.hero-badge   { animation-delay: 0.1s; }
+.hero h1      { animation-delay: 0.2s; }
+.hero-lead    { animation-delay: 0.3s; }
+.search-shell { animation-delay: 0.4s; }
+.examples     { animation-delay: 0.5s; }
+.hero-proof   { animation-delay: 0.6s; }
+
+@keyframes pageFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* PRODUCT CARDS — fade + rise when results render */
+.product-card {
+    opacity: 0;
+    animation: cardRiseIn 0.5s ease forwards;
+}
+.product-card:nth-child(1) { animation-delay: 0.05s; }
+.product-card:nth-child(2) { animation-delay: 0.1s; }
+.product-card:nth-child(3) { animation-delay: 0.15s; }
+.product-card:nth-child(4) { animation-delay: 0.2s; }
+.product-card:nth-child(5) { animation-delay: 0.25s; }
+.product-card:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes cardRiseIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* BUTTONS — gentle hover scale */
+#searchBtn, .example-btn, .add-to-cart-button, .continue-btn, .checkout-button {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+#searchBtn:hover, .example-btn:hover, .add-to-cart-button:hover,
+.continue-btn:hover, .checkout-button:hover {
+    transform: scale(1.03);
+}
+
+/* STATUS DOT — soft pulse to feel "live" */
+.status-dot {
+    display: inline-block;
+    animation: statusPulse 2s ease-in-out infinite;
+}
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(53,208,127,0.5); }
+    50%      { opacity: 0.7; box-shadow: 0 0 0 4px rgba(53,208,127,0); }
+}
+
+/* CART COUNT — small pop when it changes */
+.cart-count {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+.cart-count.bump {
+    animation: cartBump 0.3s ease;
+}
+@keyframes cartBump {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.4); }
+    100% { transform: scale(1); }
+}
+
+/* ===== RAZORGUARD PANEL — CHECKOUT SCAN SEQUENCE ===== */
+
+/* Panel itself settles in */
+.razorguard-premium-panel {
+    animation: panelSettleIn 0.4s ease forwards;
+}
+@keyframes panelSettleIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* Shield icon: subtle breathing pulse while "guarding" */
+.shield-icon {
+    display: inline-block;
+    animation: shieldBreathe 2.4s ease-in-out infinite;
+}
+@keyframes shieldBreathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+}
+
+/* Risk score circle: draws itself in like a radial scan */
+.risk-score-circle {
+    animation: scoreCircleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+}
+@keyframes scoreCircleIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* Risk score number: counts up visually via a quick fade/scale settle */
+.risk-score-value {
+    animation: scoreValuePop 0.4s ease 0.6s both;
+}
+@keyframes scoreValuePop {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Each scan-step line appears in sequence, like a live checklist */
+.scan-step {
+    opacity: 0;
+    animation: scanStepIn 0.35s ease forwards;
+}
+.scan-step:nth-child(1) { animation-delay: 0.7s; }
+.scan-step:nth-child(2) { animation-delay: 0.95s; }
+.scan-step:nth-child(3) { animation-delay: 1.2s; }
+.scan-step:nth-child(4) { animation-delay: 1.45s; }
+.scan-step:nth-child(5) { animation-delay: 1.7s; }
+@keyframes scanStepIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* "verified" status flips in with a quick flash once its step appears */
+.scan-status.verified {
+    animation: verifiedFlash 0.4s ease;
+}
+@keyframes verifiedFlash {
+    0%   { opacity: 0; }
+    50%  { opacity: 1; text-shadow: 0 0 8px rgba(53,208,127,0.6); }
+    100% { opacity: 1; text-shadow: none; }
+}
+
+/* Decision dot + status row settle in last, after all checks */
+.decision-status {
+    opacity: 0;
+    animation: decisionReveal 0.4s ease 1.9s forwards;
+}
+@keyframes decisionReveal {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Continue/Cancel buttons arrive last, after the decision is shown */
+.panel-actions {
+    opacity: 0;
+    animation: actionsReveal 0.4s ease 2.1s forwards;
+}
+@keyframes actionsReveal {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* EXTRA PREMIUM ANIMATIONS */
+.product-card {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease !important;
+}
+.product-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(139, 124, 255, 0.15);
+    z-index: 10;
+}
+
+.top-nav a {
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.top-nav a:hover {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.search-input:focus {
+    box-shadow: 0 0 0 4px rgba(139, 124, 255, 0.2);
+    border-color: rgba(139, 124, 255, 0.6);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.logo-icon {
+    animation: gentleFloat 6s ease-in-out infinite;
+}
+@keyframes gentleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.checkout-button, #searchBtn {
+    position: relative;
+    overflow: hidden;
+}
+.checkout-button::after, #searchBtn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -100%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(45deg);
+    transition: left 0.6s ease;
+}
+.checkout-button:hover::after, #searchBtn:hover::after {
+    left: 150%;
+}
+
+/* --- SUPER PREMIUM ADDITIONS --- */
+
+/* Ambient breathing glow behind the main hero */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    width: 600px;
+    height: 600px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(139,124,255,0.08) 0%, rgba(53,208,127,0.03) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    animation: ambientBreathe 8s ease-in-out infinite alternate;
+}
+@keyframes ambientBreathe {
+    0%   { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+    100% { opacity: 1; transform: translate(-50%, -45%) scale(1.1); }
+}
+
+/* Wiggle the cart icon on hover */
+.cart-button:hover .cart-button-icon {
+    animation: cartWiggle 0.4s ease-in-out;
+}
+@keyframes cartWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
+/* Soft glowing border on the AI Online status */
+.status {
+    position: relative;
+    overflow: visible;
+}
+.status::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px; right: -1px; bottom: -1px;
+    border-radius: 20px;
+    background: linear-gradient(45deg, rgba(53,208,127,0.3), transparent, rgba(53,208,127,0.3));
+    z-index: -1;
+    animation: borderSpin 4s linear infinite;
+    opacity: 0.7;
+}
+@keyframes borderSpin {
+    0% { filter: hue-rotate(0deg); opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { filter: hue-rotate(360deg); opacity: 0.5; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+    <header class="header">
+        <div class="brand-lockup">
+            <div class="logo-icon">R</div>
+            <div class="brand-copy">
+                <div class="brand-name">RAZOR<span>GUARD</span> <em>AI</em></div>
+                <div class="brand-subtitle">AI commerce · trusted checkout</div>
+            </div>
+        </div>
+
+        <nav class="top-nav" aria-label="Main navigation">
+            <a href="#results">Discover</a>
+            <a href="#trust">How it works</a>
+        </nav>
+
+        <div class="header-actions">
+            <button id="ordersButton" class="orders-button" type="button">
+                <span>My Orders</span>
+            </button>
+            <button id="cartButton" class="cart-button" type="button">
+                <span class="cart-button-icon">🛒</span>
+                <span>Cart</span>
+                <span id="cartCount" class="cart-count">0</span>
+            </button>
+            <div class="status"><span class="status-dot"></span>AI ONLINE</div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-glow hero-glow-one"></div>
+            <div class="hero-glow hero-glow-two"></div>
+
+            <div class="hero-badge"><span>✦</span> AI COMMERCE AGENT <span class="badge-divider"></span> RAZORPAY TEST MODE</div>
+
+            <h1>Shop smarter.<br><span>Pay safer.</span></h1>
+            <p class="hero-lead">
+                Tell RazorGuard what you want in plain language. It understands your intent,
+                ranks the best products, and puts a security layer between AI decisions and real money movement.
+            </p>
+
+            <div class="search-shell">
+                <div class="search-topline">
+                    <span class="search-spark">✦</span>
+                    <span>What can I help you find?</span>
+                    <span class="secure-mini">🔒 Protected session</span>
+                </div>
+                <div class="search-box">
+                    <textarea id="userInput" placeholder="Try: I need wireless headphones under ₹3,000 for travel with great battery life..." rows="3"></textarea>
+                    <button id="searchBtn" type="button">
+                        <span id="searchText">Find my best match <span class="button-arrow">→</span></span>
+                        <span id="loadingText" class="hidden"><span class="spinner"></span> Understanding your request…</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="examples">
+                <span class="examples-label">Try a request</span>
+                <button class="example-btn" type="button">Phone under 20k with best camera</button>
+                <button class="example-btn" type="button">Wireless headphones under 3k</button>
+                <button class="example-btn" type="button">Laptop around 60k with 16GB RAM</button>
+            </div>
+
+            <div id="pipeline-visualization" class="pipeline-visualization hidden">
+                <div class="pipeline-header">
+                    <span class="pipeline-title">AI COMMERCE PIPELINE</span>
+                </div>
+                <div class="pipeline-stages">
+                    <div class="pipeline-stage" id="stage-intent_parser">
+                        <div class="stage-indicator">○</div>
+                        <div class="stage-name">Intent Parser</div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage" id="stage-intent_normalizer">
+                        <div class="stage-indicator">○</div>
+                        <div class="stage-name">Intent Normalizer</div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage" id="stage-catalog_search">
+                        <div class="stage-indicator">○</div>
+                        <div class="stage-name">Catalog Search</div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage" id="stage-product_ranking">
+                        <div class="stage-indicator">○</div>
+                        <div class="stage-name">Product Ranking</div>
+                    </div>
+                    <div class="pipeline-arrow">→</div>
+                    <div class="pipeline-stage" id="stage-recommendations_ready">
+                        <div class="stage-indicator">○</div>
+                        <div class="stage-name">Recommendations Ready</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-proof" id="trust">
+                <div class="proof-item"><span class="proof-icon">🧠</span><div><strong>Understands intent</strong><small>Natural language → structured needs</small></div></div>
+                <div class="proof-line"></div>
+                <div class="proof-item"><span class="proof-icon">🎯</span><div><strong>Ranks intelligently</strong><small>Match score + product attributes</small></div></div>
+                <div class="proof-line"></div>
+                <div class="proof-item"><span class="proof-icon">🛡️</span><div><strong>Guards checkout</strong><small>Independent validation before payment</small></div></div>
+            </div>
+        </section>
+
+        <section id="results" class="results hidden">
+            <div class="intent-card">
+                <div class="intent-card-top">
+                    <div class="section-title">
+                        <span class="section-icon">🧠</span>
+                        <div>
+                            <div class="eyebrow">AGENT INSIGHT</div>
+                            <h3>Here's what I understood</h3>
+                            <p>Your request is converted into precise shopping signals.</p>
+                        </div>
+                    </div>
+                    <div class="intent-live"><span></span> Intent parsed</div>
+                </div>
+                <div id="intentContent" class="intent-content"></div>
+            </div>
+
+            <div class="section-heading">
+                <div>
+                    <div class="eyebrow">PERSONALIZED DISCOVERY</div>
+                    <h2>Best matches <span>for you</span></h2>
+                    <p id="candidateCount"></p>
+                </div>
+                <div class="ranking-note"><span>✦</span> Ranked by RazorGuard AI</div>
+            </div>
+
+            <div id="products" class="products"></div>
+        </section>
+
+        <div id="errorBox" class="error-box hidden"></div>
+
+        <section id="cartSection" class="cart-section hidden">
+            <div class="cart-header">
+                <div class="cart-title">
+                    <span class="section-icon">🛒</span>
+                    <div>
+                        <div class="eyebrow">YOUR SELECTION</div>
+                        <h2>Your cart</h2>
+                        <p>Review everything before protected checkout.</p>
+                    </div>
+                </div>
+                <button id="closeCartButton" class="close-cart-button" type="button" aria-label="Close cart">✕</button>
+            </div>
+
+            <div id="cartItems" class="cart-items"></div>
+
+            <div id="emptyCart" class="empty-cart">
+                <div class="empty-cart-icon">🛍️</div>
+                <h3>Your cart is waiting</h3>
+                <p>Add a recommendation and we'll take care of the protected checkout.</p>
+            </div>
+
+            <div id="cartSummary" class="cart-summary hidden">
+                <div class="summary-row"><span>Items</span><span id="cartItemCount">0</span></div>
+                <div class="summary-row"><span>Subtotal</span><strong id="cartSubtotal">₹0</strong></div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total-row"><span>Total</span><strong id="cartTotal">₹0</strong></div>
+                <div class="protected-checkout-note"><span>🛡️</span> RazorGuard protection runs before Razorpay.</div>
+                <button id="checkoutButton" class="checkout-button" type="button">Proceed to protected checkout <span>→</span></button>
+            </div>
+        </section>
+
+        <div id="cartToast" class="cart-toast hidden"></div>
+        
+        <!-- Order Success View -->
+        <section id="order-success-view" class="results hidden">
+            <div style="max-width: 540px; margin: 40px auto; padding: 50px 30px; text-align: center; background: linear-gradient(145deg, rgba(53,208,127,0.05), rgba(255,255,255,0.02)); border: 1px solid rgba(53,208,127,0.15); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15);">
+                <div style="margin: 0 auto 20px; width: 44px; height: 44px; border-radius: 50%; background: rgba(53,208,127,0.1); border: 1px solid rgba(53,208,127,0.3); color: #35d07f; display: flex; align-items: center; justify-content: center; font-size: 22px;">✓</div>
+                <h2 style="color: #35d07f; font-size: 12px; letter-spacing: 2px; font-weight: 800;">PAYMENT VERIFIED</h2>
+                <h3 style="color: #fff; margin-top: 8px; font-size: 26px; font-weight: 850; letter-spacing: -1px;">ORDER CONFIRMED</h3>
+                <p style="margin-top: 16px; color: #cbd5e1; font-size: 13px; line-height: 1.6;">Your purchase has been successfully verified<br>and protected by RazorGuard.</p>
+                
+                <div id="successOrderIds" style="margin-top: 25px; margin-bottom: 5px; font-size: 11px; color: #8c96a9; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 10px;"></div>
+                <div id="successOrderItems" class="checkout-items hidden" style="display: none;"></div>
+                
+                <div style="display: flex; justify-content: center; gap: 12px; margin-top: 30px;">
+                    <button id="viewSuccessOrderBtn" class="add-to-cart-button" type="button" style="padding: 12px 24px; font-size: 12px;">View Order</button>
+                    <button id="continueShoppingBtn" class="product-link" type="button" style="padding: 12px 24px; font-size: 12px; cursor: pointer; background: transparent;">Continue Shopping</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Orders View -->
+        <section id="orders-view" class="results hidden">
+            <div style="margin-bottom: 20px;">
+                <button id="backToShopFromOrdersBtn" class="checkout-cancel-action" type="button">← Back to Shop</button>
+            </div>
+            <div class="section-heading">
+                <div>
+                    <div class="eyebrow">ORDER HISTORY</div>
+                    <h2>My <span>Orders</span></h2>
+                </div>
+                <div class="ranking-note"><span>🛡️</span> Verified by PurchaseGuard</div>
+            </div>
+            <div id="ordersList" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;"></div>
+        </section>
+
+        <!-- Order Details View -->
+        <section id="order-details-view" class="results hidden">
+            <div style="margin-bottom: 20px;">
+                <button id="backToOrdersBtn" class="checkout-cancel-action" type="button">← Back to Orders</button>
+            </div>
+            <div class="section-heading">
+                <div>
+                    <div class="eyebrow" id="detailOrderDate"></div>
+                    <h2 id="detailOrderId"></h2>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px;">
+                <!-- Products -->
+                <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                    <h3 style="font-size: 14px; margin-top: 0; color: #a3abc0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">PRODUCTS</h3>
+                    <div id="detailOrderItems" style="margin-top: 15px;"></div>
+                </div>
+
+                <!-- Payment Info -->
+                <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                    <h3 style="font-size: 14px; margin-top: 0; color: #a3abc0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">PAYMENT</h3>
+                    <div id="detailPaymentInfo" style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; color: #e0e5eb;"></div>
+                </div>
+
+                <!-- Purchase Guard -->
+                <div class="razorguard-premium-panel" style="width: 100%; max-width: 100%; text-align: left; padding: 20px; box-sizing: border-box;">
+                    <div class="panel-header" style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <span class="shield-icon" style="font-size: 24px; margin: 0;">🛡️</span>
+                        <div>
+                            <h2>PURCHASE GUARD</h2>
+                            <p style="margin: 0;">SECURITY REPORT</p>
+                        </div>
+                    </div>
+                    
+                    <div id="detailGuardScore" style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;"></div>
+                    
+                    <div class="security-verification" style="margin-bottom: 0;">
+                        <h3>SECURITY VERIFICATION</h3>
+                        <ul id="detailGuardChecks" class="check-list"></ul>
+                        <div id="detailGuardExplanation" style="margin-top: 15px; font-size: 12px; color: #a3abc0; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JUDGE MODE OBSERVABILITY PANEL -->
+    <div id="judgeModePanel" class="judge-mode-panel hidden">
+        <div class="judge-mode-header" onclick="document.getElementById('judgeModePanel').classList.toggle('collapsed')">
+            <div class="judge-mode-title">
+                <span class="judge-icon">⚖️</span>
+                <span>HOW RAZORGUARD HANDLED THIS</span>
+            </div>
+            <button type="button" class="judge-toggle">↕</button>
+        </div>
+        <div class="judge-mode-content">
+            <div class="judge-layer">
+                <div class="judge-layer-title">AI UNDERSTANDING</div>
+                <ul id="judgeLayerAI" class="judge-list">
+                    <li class="judge-step" id="j-step-intent"><span class="j-icon">○</span> <span class="j-text">Intent extracted</span></li>
+                </ul>
+            </div>
+            <div class="judge-layer">
+                <div class="judge-layer-title">APPLICATION ENFORCEMENT</div>
+                <ul id="judgeLayerApp" class="judge-list">
+                    <li class="judge-step" id="j-step-catalog"><span class="j-icon">○</span> <span class="j-text">Hard constraints enforced</span></li>
+                    <li class="judge-step" id="j-step-rank"><span class="j-icon">○</span> <span class="j-text">Recommendations ranked</span></li>
+                    <li class="judge-step" id="j-step-explain"><span class="j-icon">○</span> <span class="j-text">Recommendations explained</span></li>
+                </ul>
+            </div>
+            <div class="judge-layer">
+                <div class="judge-layer-title">FINANCIAL AUTHORITY</div>
+                <ul id="judgeLayerFin" class="judge-list">
+                    <li class="judge-step" id="j-step-confirm"><span class="j-icon">○</span> <span class="j-text">Explicit confirmation received</span></li>
+                    <li class="judge-step" id="j-step-price"><span class="j-icon">○</span> <span class="j-text">Server price calculated</span></li>
+                    <li class="judge-step" id="j-step-pg"><span class="j-icon">○</span> <span class="j-text">Purchase Guard evaluated</span></li>
+                    <li class="judge-step" id="j-step-razorpay"><span class="j-icon">○</span> <span class="j-text">Razorpay order created</span></li>
+                    <li class="judge-step" id="j-step-verify"><span class="j-icon">○</span> <span class="j-text">Payment verified</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-brand">RAZOR<span>GUARD</span> <em>AI</em></div>
+        <p>AI-powered commerce with an independent security boundary before payment.</p>
+        <div class="footer-pills">
+            <span>Gemini</span><span>Intent normalization</span><span>Universal ranking</span><span>Purchase Guard</span><span>Razorpay Test Mode</span>
+        </div>
+    </footer>
+</div>
+<script src="script.js?v=20260902h"></script>
+</body>
+</html>

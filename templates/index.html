@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RazorPay AI Commerce Agent</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">R</div>
+          <div>
+            <h1>RazorPay AI Commerce Agent</h1>
+            <p>AI-powered shopping discovery</p>
+          </div>
+        </div>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          AI ONLINE
+        </div>
+      </header>
+
+      <main class="page-content">
+        <section class="hero-panel">
+          <div class="hero-badge">✨ AI-Powered Shopping</div>
+          <h2>What are you looking for?</h2>
+          <p>
+            Tell me naturally and I’ll match you with the most relevant products
+            based on your intent, preferences, and budget.
+          </p>
+
+          <div class="search-panel">
+            <textarea
+              id="userInput"
+              rows="3"
+              placeholder="Example: I need a phone under 20k with the best camera..."
+            ></textarea>
+            <button id="searchBtn" type="button">
+              <span id="searchText">Find Products</span>
+              <span id="loadingText" class="hidden">Finding...</span>
+            </button>
+          </div>
+
+          <div class="example-row">
+            <span>Try:</span>
+            <button class="example-btn" type="button">Phone under 20k with best camera</button>
+            <button class="example-btn" type="button">Wireless headphones under 3k</button>
+            <button class="example-btn" type="button">Laptop around 60k with 16GB RAM</button>
+          </div>
+        </section>
+
+        <section id="resultsSection" class="results-panel hidden" aria-live="polite">
+          <div class="intent-card">
+            <div class="section-header">
+              <span class="section-icon">🧠</span>
+              <div>
+                <h3>AI Understanding</h3>
+                <p>What the agent understood</p>
+              </div>
+            </div>
+            <div id="intentContent" class="intent-content"></div>
+          </div>
+
+          <div class="results-header">
+            <div>
+              <h2>🏆 Best Matches</h2>
+              <p id="candidateCount"></p>
+            </div>
+          </div>
+
+          <div id="products" class="products-grid"></div>
+        </section>
+
+        <div id="emptyState" class="state-box empty-state">
+          <div class="state-icon">🛍️</div>
+          <h3>Ready to shop</h3>
+          <p>Enter a shopping requirement to discover the best matches.</p>
+        </div>
+
+        <div id="errorBox" class="state-box error-box hidden" role="alert"></div>
+      </main>
+
+      <footer class="footer">
+        <p>RazorPay AI Commerce Agent</p>
+        <span>Gemini • Intent Normalization • Universal Ranking</span>
+      </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+  </body>
+</html>

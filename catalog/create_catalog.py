@@ -1,0 +1,947 @@
+import csv
+import os
+
+
+OUTPUT_FILE = os.path.join(
+    os.path.dirname(__file__),
+    "products.csv"
+)
+
+
+products = [
+
+    # ==================================================
+    # HEADPHONES
+    # ==================================================
+
+    [
+        "P001", "SoundMax Air Pro", "wireless headphones",
+        2499, "INR",
+        "Wireless headphones with long battery life and comfortable ear cushions",
+        4.5, 25, 40, "yes", "excellent",
+        "travel,online classes,gaming"
+    ],
+
+    [
+        "P002", "BeatFlow Lite", "wireless headphones",
+        1799, "INR",
+        "Lightweight wireless headphones with balanced sound and good battery",
+        4.2, 40, 30, "no", "good",
+        "travel,music,online classes"
+    ],
+
+    [
+        "P003", "GamePulse X1", "gaming headphones",
+        2899, "INR",
+        "Low latency gaming headphones with surround sound and clear microphone",
+        4.6, 15, 25, "no", "excellent",
+        "gaming,online classes"
+    ],
+
+    [
+        "P004", "QuietRide ANC", "wireless headphones",
+        2999, "INR",
+        "Wireless headphones with active noise cancellation and premium comfort",
+        4.7, 12, 35, "yes", "excellent",
+        "travel,music,online classes"
+    ],
+
+    [
+        "P005", "BassBeat 500", "wireless headphones",
+        1499, "INR",
+        "Affordable wireless headphones with strong bass and decent battery",
+        4.0, 50, 24, "no", "average",
+        "music,travel"
+    ],
+
+    [
+        "P006", "StudioSound Pro", "wireless headphones",
+        3499, "INR",
+        "Premium wireless headphones designed for music and long listening sessions",
+        4.6, 18, 42, "yes", "excellent",
+        "music,travel"
+    ],
+
+    [
+        "P007", "TravelPods Max", "wireless headphones",
+        2699, "INR",
+        "Long battery wireless headphones designed for travel",
+        4.5, 20, 45, "yes", "good",
+        "travel,music"
+    ],
+
+    [
+        "P008", "GameStorm 7", "gaming headphones",
+        3199, "INR",
+        "Gaming headset with low latency audio and powerful microphone",
+        4.4, 22, 28, "no", "excellent",
+        "gaming,streaming"
+    ],
+
+    [
+        "P009", "MusicBeat Pro", "wireless headphones",
+        2299, "INR",
+        "Balanced wireless headphones with rich sound and comfortable cushions",
+        4.3, 32, 36, "no", "good",
+        "music,travel"
+    ],
+
+    [
+        "P010", "ClearTalk Air", "wireless headphones",
+        1999, "INR",
+        "Wireless headphones with clear microphone for calls and online classes",
+        4.3, 35, 29, "no", "excellent",
+        "online classes,meetings,travel"
+    ],
+
+
+    # ==================================================
+    # SMARTPHONES
+    # ==================================================
+
+    [
+        "PH001", "Nova X5", "smartphones",
+        18999, "INR",
+        "5G smartphone with 50MP camera and 8GB RAM",
+        4.4, 30, "", "", "",
+        "photography,gaming,everyday use"
+    ],
+
+    [
+        "PH002", "UltraPhone Pro", "smartphones",
+        24999, "INR",
+        "Premium 5G smartphone with 64MP camera and 12GB RAM",
+        4.6, 18, "", "", "",
+        "photography,gaming"
+    ],
+
+    [
+        "PH003", "CorePhone Lite", "smartphones",
+        14999, "INR",
+        "Affordable 5G smartphone with 42MP camera and 6GB RAM",
+        4.2, 45, "", "", "",
+        "everyday use,students"
+    ],
+
+    [
+        "PH004", "PixelView A1", "smartphones",
+        17999, "INR",
+        "5G smartphone focused on photography and battery life",
+        4.5, 27, "", "", "",
+        "photography,travel"
+    ],
+
+    [
+        "PH005", "SmartOne S", "smartphones",
+        19999, "INR",
+        "5G smartphone with 108MP camera and 8GB RAM",
+        4.3, 28, "", "", "",
+        "photography,gaming"
+    ],
+
+    [
+        "PH006", "PowerPhone 12", "smartphones",
+        16999, "INR",
+        "Long battery smartphone with 5000mAh battery",
+        4.2, 35, "", "", "",
+        "travel,everyday use"
+    ],
+
+    [
+        "PH007", "GamePhone GT", "smartphones",
+        21999, "INR",
+        "Gaming smartphone with high performance processor and 12GB RAM",
+        4.5, 20, "", "", "",
+        "gaming,entertainment"
+    ],
+
+    [
+        "PH008", "VisionMax 8", "smartphones",
+        27999, "INR",
+        "Premium smartphone with high resolution camera and 256GB storage",
+        4.7, 15, "", "", "",
+        "photography,content creation"
+    ],
+
+    [
+        "PH009", "StudentPhone Z", "smartphones",
+        12999, "INR",
+        "Affordable smartphone for students and everyday use",
+        4.1, 50, "", "", "",
+        "students,everyday use"
+    ],
+
+    [
+        "PH010", "SnapPro 5G", "smartphones",
+        19999, "INR",
+        "5G camera smartphone with 50MP sensor and 256GB storage",
+        4.4, 24, "", "", "",
+        "photography,travel"
+    ],
+
+
+    # ==================================================
+    # LAPTOPS
+    # ==================================================
+
+    [
+        "LP001", "UltraWork 14", "laptops",
+        59999, "INR",
+        "14-inch laptop with 16GB RAM and Core i5 processor",
+        4.6, 15, 10, "", "",
+        "coding,office,students"
+    ],
+
+    [
+        "LP002", "CodeBook 14", "laptops",
+        54999, "INR",
+        "Developer laptop with 16GB RAM and Core i7 processor",
+        4.7, 12, 12, "", "",
+        "coding,development"
+    ],
+
+    [
+        "LP003", "StudentBook Air", "laptops",
+        42999, "INR",
+        "Affordable laptop for students with 8GB RAM",
+        4.3, 25, 11, "", "",
+        "students,office"
+    ],
+
+    [
+        "LP004", "PowerBook Pro", "laptops",
+        69999, "INR",
+        "High performance laptop with 16GB RAM and Ryzen 7 processor",
+        4.8, 10, 8, "", "",
+        "coding,development,gaming"
+    ],
+
+    [
+        "LP005", "WorkMate 15", "laptops",
+        48999, "INR",
+        "Reliable laptop for office work with 16GB RAM",
+        4.4, 22, 10, "", "",
+        "office,students"
+    ],
+
+    [
+        "LP006", "DevMaster X", "laptops",
+        74999, "INR",
+        "Developer laptop with 16GB RAM and 1TB storage",
+        4.8, 8, 9, "", "",
+        "coding,development"
+    ],
+
+    [
+        "LP007", "LightBook 13", "laptops",
+        51999, "INR",
+        "Lightweight laptop with long battery life",
+        4.5, 18, 13, "", "",
+        "students,travel,office"
+    ],
+
+    [
+        "LP008", "RyzenWork 15", "laptops",
+        57999, "INR",
+        "Ryzen 5 laptop with 16GB RAM and 512GB storage",
+        4.5, 14, 13, "", "",
+        "coding,office"
+    ],
+
+    [
+        "LP009", "CreatorBook Pro", "laptops",
+        84999, "INR",
+        "High performance laptop for development and content creation",
+        4.9, 7, 8, "", "",
+        "development,content creation"
+    ],
+
+    [
+        "LP010", "CampusBook", "laptops",
+        39999, "INR",
+        "Budget laptop designed for students",
+        4.2, 30, 9, "", "",
+        "students,office"
+    ],
+
+
+    # ==================================================
+    # SMARTWATCHES
+    # ==================================================
+
+    [
+        "SW001", "FitWatch Pro", "smartwatches",
+        4999, "INR",
+        "Smartwatch with GPS, heart rate monitoring and long battery",
+        4.6, 25, "", "", "",
+        "fitness,running"
+    ],
+
+    [
+        "SW002", "UrbanWatch", "smartwatches",
+        4499, "INR",
+        "Stylish smartwatch with fitness tracking",
+        4.4, 30, "", "", "",
+        "fitness,everyday use"
+    ],
+
+    [
+        "SW003", "SportWatch Lite", "smartwatches",
+        2999, "INR",
+        "Affordable fitness smartwatch with GPS",
+        4.2, 40, "", "", "",
+        "fitness,running"
+    ],
+
+    [
+        "SW004", "ActiveWatch S", "smartwatches",
+        3499, "INR",
+        "Fitness smartwatch with heart rate monitoring",
+        4.1, 35, "", "", "",
+        "fitness"
+    ],
+
+    [
+        "SW005", "EnduroWatch", "smartwatches",
+        5999, "INR",
+        "Long battery smartwatch for athletes",
+        4.7, 18, "", "", "",
+        "fitness,running"
+    ],
+
+    [
+        "SW006", "HealthTrack Pro", "smartwatches",
+        5499, "INR",
+        "Advanced health and fitness tracking smartwatch",
+        4.6, 20, "", "", "",
+        "fitness,health tracking"
+    ],
+
+    [
+        "SW007", "SmartTime X", "smartwatches",
+        3999, "INR",
+        "Everyday smartwatch with notifications and fitness tracking",
+        4.3, 28, "", "", "",
+        "everyday use,fitness"
+    ],
+
+    [
+        "SW008", "Runner GPS", "smartwatches",
+        4799, "INR",
+        "GPS smartwatch designed for runners",
+        4.5, 16, "", "", "",
+        "running,fitness"
+    ],
+
+    [
+        "SW009", "Active Pro Max", "smartwatches",
+        6999, "INR",
+        "Premium smartwatch with GPS and advanced fitness features",
+        4.8, 10, "", "", "",
+        "fitness,running"
+    ],
+
+    [
+        "SW010", "DailyFit", "smartwatches",
+        2499, "INR",
+        "Budget fitness smartwatch for everyday use",
+        4.1, 45, "", "", "",
+        "fitness,everyday use"
+    ],
+
+
+    # ==================================================
+    # RUNNING SHOES
+    # ==================================================
+
+    [
+        "RS001", "DailyWalk Pro", "running shoes",
+        1999, "INR",
+        "Lightweight mesh running shoes with high comfort",
+        4.5, 30, "", "", "",
+        "running,walking"
+    ],
+
+    [
+        "RS002", "ComfortRun X", "running shoes",
+        2999, "INR",
+        "Comfort-focused running shoes for daily training",
+        4.6, 24, "", "", "",
+        "running,gym"
+    ],
+
+    [
+        "RS003", "RunFlex Pro", "running shoes",
+        3499, "INR",
+        "Flexible running shoes with lightweight construction",
+        4.7, 20, "", "", "",
+        "running,marathon"
+    ],
+
+    [
+        "RS004", "StreetStep", "running shoes",
+        2499, "INR",
+        "Everyday running shoes with durable synthetic material",
+        4.2, 35, "", "", "",
+        "running,walking"
+    ],
+
+    [
+        "RS005", "SpeedRunner", "running shoes",
+        3999, "INR",
+        "Performance running shoes designed for speed",
+        4.8, 18, "", "", "",
+        "running,marathon"
+    ],
+
+    [
+        "RS006", "CloudRun Lite", "running shoes",
+        2799, "INR",
+        "Lightweight comfortable shoes for daily running",
+        4.5, 27, "", "", "",
+        "running,walking"
+    ],
+
+    [
+        "RS007", "GymRunner", "running shoes",
+        2299, "INR",
+        "Versatile shoes for gym and running",
+        4.3, 32, "", "", "",
+        "gym,running"
+    ],
+
+    [
+        "RS008", "TrailRun X", "running shoes",
+        4299, "INR",
+        "Durable running shoes designed for outdoor trails",
+        4.7, 14, "", "", "",
+        "running,hiking"
+    ],
+
+    [
+        "RS009", "FlexStep", "running shoes",
+        1899, "INR",
+        "Affordable lightweight running shoes",
+        4.1, 40, "", "", "",
+        "running,walking"
+    ],
+
+    [
+        "RS010", "Marathon Pro", "running shoes",
+        4999, "INR",
+        "High performance shoes designed for long distance running",
+        4.9, 12, "", "", "",
+        "running,marathon"
+    ],
+
+
+    # ==================================================
+    # BACKPACKS
+    # ==================================================
+
+    [
+        "BP001", "CampusPack 25L", "backpacks",
+        1499, "INR",
+        "Water resistant backpack with laptop compartment",
+        4.5, 35, "", "", "",
+        "college,office,travel"
+    ],
+
+    [
+        "BP002", "UrbanCarry", "backpacks",
+        1899, "INR",
+        "35L water resistant backpack for travel",
+        4.6, 25, "", "", "",
+        "travel,office"
+    ],
+
+    [
+        "BP003", "DailyPack Lite", "backpacks",
+        999, "INR",
+        "Compact everyday backpack with laptop compartment",
+        4.2, 50, "", "", "",
+        "college,everyday use"
+    ],
+
+    [
+        "BP004", "TravelPack 30", "backpacks",
+        2299, "INR",
+        "Large travel backpack with water resistant material",
+        4.7, 20, "", "", "",
+        "travel"
+    ],
+
+    [
+        "BP005", "WorkBag Pro", "backpacks",
+        2499, "INR",
+        "Professional laptop backpack for office use",
+        4.6, 18, "", "", "",
+        "office,travel"
+    ],
+
+    [
+        "BP006", "StudentPack", "backpacks",
+        1199, "INR",
+        "Affordable backpack for students",
+        4.3, 45, "", "", "",
+        "college,everyday use"
+    ],
+
+    [
+        "BP007", "AdventurePack", "backpacks",
+        2999, "INR",
+        "Durable backpack for outdoor adventures",
+        4.8, 15, "", "", "",
+        "travel,hiking"
+    ],
+
+    [
+        "BP008", "LaptopPack 35L", "backpacks",
+        2199, "INR",
+        "35L backpack with dedicated laptop compartment",
+        4.5, 22, "", "", "",
+        "office,college"
+    ],
+
+    [
+        "BP009", "CompactCarry", "backpacks",
+        899, "INR",
+        "Compact everyday backpack",
+        4.1, 60, "", "", "",
+        "college,everyday use"
+    ],
+
+    [
+        "BP010", "ProTravel 40", "backpacks",
+        3499, "INR",
+        "Large water resistant travel backpack",
+        4.8, 12, "", "", "",
+        "travel,hiking"
+    ],
+
+
+    # ==================================================
+    # WATCHES
+    # ==================================================
+
+    [
+        "W001", "Minimal Time", "watches",
+        2499, "INR",
+        "Classic stainless steel watch with elegant design",
+        4.5, 30, "", "", "",
+        "office,everyday use"
+    ],
+
+    [
+        "W002", "Daily Classic", "watches",
+        1999, "INR",
+        "Affordable classic everyday watch",
+        4.4, 35, "", "", "",
+        "everyday use,office"
+    ],
+
+    [
+        "W003", "Classic Steel", "watches",
+        3999, "INR",
+        "Premium stainless steel classic watch",
+        4.7, 20, "", "", "",
+        "office,formal"
+    ],
+
+    [
+        "W004", "Leather Classic", "watches",
+        2999, "INR",
+        "Classic leather strap watch",
+        4.6, 22, "", "", "",
+        "formal,office"
+    ],
+
+    [
+        "W005", "Executive Pro", "watches",
+        4999, "INR",
+        "Premium stainless steel watch for professional use",
+        4.8, 15, "", "", "",
+        "office,formal"
+    ],
+
+    [
+        "W006", "Urban Time", "watches",
+        2299, "INR",
+        "Modern everyday watch with classic styling",
+        4.3, 28, "", "", "",
+        "everyday use"
+    ],
+
+    [
+        "W007", "Leather Elite", "watches",
+        4499, "INR",
+        "Premium leather watch with elegant styling",
+        4.7, 14, "", "", "",
+        "formal,office"
+    ],
+
+    [
+        "W008", "Steel Edge", "watches",
+        3499, "INR",
+        "Stainless steel watch with modern design",
+        4.5, 19, "", "", "",
+        "office,everyday use"
+    ],
+
+    [
+        "W009", "Classic Gold", "watches",
+        5499, "INR",
+        "Elegant premium classic watch",
+        4.8, 10, "", "", "",
+        "formal,events"
+    ],
+
+    [
+        "W010", "Daily Leather", "watches",
+        1799, "INR",
+        "Affordable leather strap everyday watch",
+        4.2, 40, "", "", "",
+        "everyday use"
+    ],
+
+
+    # ==================================================
+    # AIR FRYERS
+    # ==================================================
+
+    [
+        "AF001", "FamilyFry X", "air fryers",
+        6999, "INR",
+        "7L digital air fryer for family cooking",
+        4.7, 15, "", "", "",
+        "family cooking,healthy cooking"
+    ],
+
+    [
+        "AF002", "AirCook Pro", "air fryers",
+        5999, "INR",
+        "5L digital air fryer with powerful heating",
+        4.5, 20, "", "", "",
+        "family cooking,healthy cooking"
+    ],
+
+    [
+        "AF003", "CrispChef 4L", "air fryers",
+        4999, "INR",
+        "4L digital air fryer for everyday cooking",
+        4.4, 25, "", "", "",
+        "everyday cooking"
+    ],
+
+    [
+        "AF004", "QuickFry Lite", "air fryers",
+        3499, "INR",
+        "Compact air fryer for small kitchens",
+        4.2, 30, "", "", "",
+        "students,everyday cooking"
+    ],
+
+    [
+        "AF005", "MegaFry 6L", "air fryers",
+        6499, "INR",
+        "6L air fryer for family meals",
+        4.6, 18, "", "", "",
+        "family cooking"
+    ],
+
+    [
+        "AF006", "HealthyFry Pro", "air fryers",
+        5799, "INR",
+        "Digital air fryer designed for healthy cooking",
+        4.6, 22, "", "", "",
+        "healthy cooking"
+    ],
+
+    [
+        "AF007", "CompactCrisp", "air fryers",
+        2999, "INR",
+        "Compact 3L air fryer for small households",
+        4.1, 35, "", "", "",
+        "students,everyday cooking"
+    ],
+
+    [
+        "AF008", "PowerFry 7L", "air fryers",
+        7499, "INR",
+        "Large 7L air fryer with high power",
+        4.8, 12, "", "", "",
+        "family cooking"
+    ],
+
+    [
+        "AF009", "EasyFry Digital", "air fryers",
+        4299, "INR",
+        "Easy digital air fryer for everyday meals",
+        4.3, 28, "", "", "",
+        "everyday cooking"
+    ],
+
+    [
+        "AF010", "ChefFry Max", "air fryers",
+        7999, "INR",
+        "Premium air fryer with large capacity",
+        4.8, 10, "", "", "",
+        "family cooking,healthy cooking"
+    ],
+
+
+    # ==================================================
+    # VACUUM CLEANERS
+    # ==================================================
+
+    [
+        "VC001", "HomeVac Pro", "vacuum cleaners",
+        6999, "INR",
+        "Cordless vacuum cleaner with powerful suction",
+        4.7, 15, "", "", "",
+        "home cleaning"
+    ],
+
+    [
+        "VC002", "DustFree Lite", "vacuum cleaners",
+        4999, "INR",
+        "Lightweight cordless vacuum cleaner",
+        4.4, 25, "", "", "",
+        "home cleaning"
+    ],
+
+    [
+        "VC003", "QuickClean", "vacuum cleaners",
+        3999, "INR",
+        "Compact cordless vacuum cleaner for everyday cleaning",
+        4.2, 30, "", "", "",
+        "home cleaning"
+    ],
+
+    [
+        "VC004", "PowerSuction X", "vacuum cleaners",
+        7999, "INR",
+        "High suction cordless vacuum cleaner",
+        4.8, 12, "", "", "",
+        "deep cleaning"
+    ],
+
+    [
+        "VC005", "CleanMaster Pro", "vacuum cleaners",
+        6499, "INR",
+        "Powerful cordless vacuum for home cleaning",
+        4.6, 18, "", "", "",
+        "home cleaning,deep cleaning"
+    ],
+
+    [
+        "VC006", "DustHunter", "vacuum cleaners",
+        5499, "INR",
+        "Long battery cordless vacuum cleaner",
+        4.5, 22, "", "", "",
+        "home cleaning"
+    ],
+
+    [
+        "VC007", "TurboVac", "vacuum cleaners",
+        8999, "INR",
+        "Premium high suction vacuum cleaner",
+        4.8, 10, "", "", "",
+        "deep cleaning"
+    ],
+
+    [
+        "VC008", "MiniVac", "vacuum cleaners",
+        2999, "INR",
+        "Compact vacuum cleaner for small spaces",
+        4.1, 35, "", "", "",
+        "home cleaning,car cleaning"
+    ],
+
+    [
+        "VC009", "HomeClean X", "vacuum cleaners",
+        4599, "INR",
+        "Cordless vacuum cleaner for everyday home use",
+        4.3, 27, "", "", "",
+        "home cleaning"
+    ],
+
+    [
+        "VC010", "UltraVac Max", "vacuum cleaners",
+        9999, "INR",
+        "High performance cordless vacuum cleaner",
+        4.9, 8, "", "", "",
+        "deep cleaning,home cleaning"
+    ],
+
+
+    # ==================================================
+    # FITNESS EQUIPMENT
+    # ==================================================
+
+    [
+        "FE001", "FitMat Pro", "fitness equipment",
+        1299, "INR",
+        "Portable high resistance fitness mat",
+        4.5, 40, "", "", "",
+        "home workout,yoga"
+    ],
+
+    [
+        "FE002", "PowerBand Set", "fitness equipment",
+        999, "INR",
+        "Portable resistance band set for home workouts",
+        4.4, 50, "", "", "",
+        "home workout,strength training"
+    ],
+
+    [
+        "FE003", "GymKit Basic", "fitness equipment",
+        2499, "INR",
+        "Complete basic home fitness kit",
+        4.3, 25, "", "", "",
+        "home workout,strength training"
+    ],
+
+    [
+        "FE004", "Resistance Pro", "fitness equipment",
+        1799, "INR",
+        "High resistance portable workout equipment",
+        4.6, 30, "", "", "",
+        "strength training,home workout"
+    ],
+
+    [
+        "FE005", "HomeGym Set", "fitness equipment",
+        3499, "INR",
+        "Complete home workout equipment set",
+        4.7, 18, "", "", "",
+        "home workout,strength training"
+    ],
+
+    [
+        "FE006", "FlexBand Pro", "fitness equipment",
+        1299, "INR",
+        "Medium resistance portable fitness bands",
+        4.3, 35, "", "", "",
+        "home workout,yoga"
+    ],
+
+    [
+        "FE007", "StrengthKit X", "fitness equipment",
+        2999, "INR",
+        "High resistance equipment for strength training",
+        4.6, 20, "", "", "",
+        "strength training,home workout"
+    ],
+
+    [
+        "FE008", "YogaFit Mat", "fitness equipment",
+        1499, "INR",
+        "Portable fitness mat designed for yoga and workouts",
+        4.5, 32, "", "", "",
+        "yoga,home workout"
+    ],
+
+    [
+        "FE009", "WorkoutBand Max", "fitness equipment",
+        1899, "INR",
+        "High resistance portable workout bands",
+        4.7, 25, "", "", "",
+        "strength training,home workout"
+    ],
+
+    [
+        "FE010", "FitnessStarter Kit", "fitness equipment",
+        2199, "INR",
+        "Starter fitness kit for home workouts",
+        4.4, 28, "", "", "",
+        "home workout,yoga"
+    ],
+]
+
+
+# ======================================================
+# CSV HEADER
+# ======================================================
+
+headers = [
+    "product_id",
+    "name",
+    "category",
+    "price",
+    "currency",
+    "description",
+    "rating",
+    "stock",
+    "battery_hours",
+    "noise_cancellation",
+    "microphone_quality",
+    "use_case"
+]
+
+
+# ======================================================
+# WRITE CSV
+# ======================================================
+
+with open(
+    OUTPUT_FILE,
+    "w",
+    newline="",
+    encoding="utf-8"
+) as file:
+
+    writer = csv.writer(file)
+
+    writer.writerow(
+        headers
+    )
+
+    writer.writerows(
+        products
+    )
+
+
+print("=" * 70)
+print("RAZORPAY AI COMMERCE AGENT")
+print("MERCHANT CATALOG GENERATOR")
+print("=" * 70)
+
+print()
+print(
+    f"Catalog created successfully!"
+)
+
+print(
+    f"File: {OUTPUT_FILE}"
+)
+
+print(
+    f"Products: {len(products)}"
+)
+
+print()
+print("Categories:")
+
+categories = sorted(
+    set(
+        row[2]
+        for row in products
+    )
+)
+
+for category in categories:
+
+    count = sum(
+        1
+        for row in products
+        if row[2] == category
+    )
+
+    print(
+        f"  {category}: {count}"
+    )
+
+print()
+print("=" * 70)
